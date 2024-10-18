@@ -1,6 +1,6 @@
 
 import flet as ft
-from selenuim_leo import SeleniumLeo, By
+from selenium_leo1 import SeleniumLeo, By
 from time import sleep
 
 
