@@ -42,7 +42,7 @@ class SeleniumLeo:
             
         self.Tempo(0.2,0.4)
 
-    def Clicar2(self, local, t:[float, int] = None):
+    def Clicar2(self, local, t:[float, int] = None): # type: ignore
         self.Aguardar(local)
         cont = 0
         while True:
@@ -126,7 +126,10 @@ class SeleniumLeo:
             #     return open(tutorial_criar_perfil_chrome)
             
             # if self.modo_oculto:
-            #     options.add_argument("--headless")
+            options.add_argument("--headless")
+            options.add_argument("--no-sandbox")
+            options.add_argument("--disable-dev-shm-usage")
+                        
                 # options.add_argument("--disable-gpu")
 
             # options.add_argument(tamanho_janela)
