@@ -18,10 +18,10 @@ from selenium.webdriver.chrome.options import Options
 from time import sleep
 from random import uniform
 from os import path, remove,environ
-from  pyperclip import copy, paste
+# from  pyperclip import copy, paste
 
 from  tkinter import Tk
-from webbrowser import open
+# from webbrowser import open
 
 
 

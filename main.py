@@ -11,7 +11,7 @@ from re import findall, sub, search
 # import pickle
 import os
 from time import sleep
-import pandas as pd
+# import pandas as pd
 from dotenv import load_dotenv
 
 
