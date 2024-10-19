@@ -1,14 +1,9 @@
 
 import flet as ft
-# from selenium import webdriver
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.chrome.service import Service
-# from webdriver_manager.chrome import ChromeDriverManager
-# from selenium.webdriver.chrome.options import Options
-# from  tkinter import Tk
+
 from selenium_leo1 import SeleniumLeo, By
 from re import findall, sub, search
-# import pickle
+
 import os
 from time import sleep
 # import pandas as pd

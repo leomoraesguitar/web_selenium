@@ -20,7 +20,7 @@ from random import uniform
 from os import path, remove,environ
 # from  pyperclip import copy, paste
 
-from  tkinter import Tk
+# from  tkinter import Tk
 # from webbrowser import open
 
 
@@ -104,12 +104,12 @@ class SeleniumLeo:
         self.navegador.set_window_position(largura_monitor//2, 0)
 
 
-    def get_screen_dimensions(self):
-        root = Tk()
-        root.withdraw()  # Esconde a janela principal
-        screen_width = root.winfo_screenwidth()
-        screen_height = root.winfo_screenheight()
-        return screen_width, screen_height
+    # def get_screen_dimensions(self):
+    #     root = Tk()
+    #     root.withdraw()  # Esconde a janela principal
+    #     screen_width = root.winfo_screenwidth()
+    #     screen_height = root.winfo_screenheight()
+    #     return screen_width, screen_height
 
     def verificar_pasta_perfil_chrome(self):
         user_profile = environ.get('USERPROFILE')
@@ -151,9 +151,9 @@ class SeleniumLeo:
         else:
             print(f'O navegador já está iniciado')
         
-        if not self.modo_oculto:
-            largura, altura = self.get_screen_dimensions()
-            self.DefinirTamenhoPosicao(largura, altura)
+        # if not self.modo_oculto:
+        #     largura, altura = self.get_screen_dimensions()
+        #     self.DefinirTamenhoPosicao(largura, altura)
 
     @property
     def FecharNavegador(self):
