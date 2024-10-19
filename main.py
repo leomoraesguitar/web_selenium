@@ -1,9 +1,10 @@
 
 import flet as ft
-
+import json
 from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
 from re import findall, sub, search
-
+from DatabaseManager import DatabaseManager
+from responsiveTablle import ResponsiveTablleDic
 
 # import pandas as pd
 from dotenv import load_dotenv
@@ -20,13 +21,16 @@ class ClassName(ft.Column):
         self.expand = True
         self.navegador_iniciado = False
         self.selenium = SeleniumLeo(print, modo_oculto=True)
+
         # self.pprint = print
         self.nometabela = 'tabela.plk'
         self.login_tj = False
 
         self.usuario = getenv("USUARIO")
         self.senha = getenv("SENHA")
+        connection_string = getenv("connection_string")
 
+        self.db = DatabaseManager(connection_string, "mandadostjse", pprint=self.pprint)
 
         self.home = '//*[@id="menuPrincipal"]/ul/li[1]/a/span'
         self.cem = '//*[@id="mov:j_id2"]/option[3]'
@@ -38,13 +42,17 @@ class ClassName(ft.Column):
 
 
         self.saida = ft.Text('')
+        dic = self.Ler_json_db()
+        # lista = self.ConverterDicToList(dic)
+        self.tabela_mandados = ResponsiveTablleDic(dic)
 
         self.controls = [
-            ft.FilledButton(
-                text = 'raspar',
-                on_click=self.Atualizar_tabela_picle,
-            ),
-            ft.ListView([self.saida], expand=True, auto_scroll=True)
+            # ft.FilledButton(
+            #     text = 'raspar',
+            #     on_click=self.Atualizar_tabela_picle,
+            # ),
+            self.tabela_mandados,
+            # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
         ]
 
 
@@ -296,14 +304,57 @@ class ClassName(ft.Column):
     #     else:
     #         return None    
 
+        # list_tab = self.dic_cols_tabela2.values.tolist()
+        # print(list_tab)
+        #     self.tabela.reset_index(drop = True, inplace=True)
+        # self.Escrever_json_db(self.dic_cols_tabela2)
 
+    def ConverterDicToList(self, dic):
+        l = []
+        coluna1 = list(dic.keys())[0]
+        for n,i in enumerate(dic[coluna1]):
+            l1 = []
+            for j in list(dic.keys()):
+                l1.append(dic[j][n])
+            l.append(l1)
+        return l
+
+
+    def Escrever_json_db(self, dic):
+        self.db.EditarJson(
+            user_id='leomoraes', 
+            novos_dados_json=dic,
+            tabela = 'mandadostjse'
+        ) 
+    def Ler_json_db(self):
+        return self.db.LerJson('leomoraes',  "mandadostjse")
+
+
+    def Escrever_json(self, data, filename):
+        if not filename.endswith('.json'):
+            filename += '.json'
+        with open(filename, 'w') as f:
+            json.dump(data, f, indent=4)
+
+    def Ler_json(self, filename, default=None):
+        if not filename.endswith('.json'):
+            filename += '.json'
+        try:
+            with open(filename, 'r') as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            try:
+                self.Escrever_json(default, filename)
+            except:
+                pass
+            return default or {}        
 
 
 def main(page: ft.Page):
     # Definindo o t�tulo da p�gina
     page.title = 'Título'
     page.window.width = 500  # Define a largura da janela como 800 pixels
-    page.window.height = 385  # 
+    page.window.height = 800  # 
     page.theme_mode = ft.ThemeMode.DARK
     page.theme = ft.Theme(
         scrollbar_theme = ft.ScrollbarTheme(
@@ -375,42 +426,42 @@ def main(page: ft.Page):
     )
 
 
-    page.navigation_bar = ft.CupertinoNavigationBar(
-    bgcolor= ft.colors.BLACK38,
-    inactive_color=ft.colors.GREY,
-    active_color=ft.colors.GREEN_800,
-    on_change=lambda e: print('Selected tab:', e.control.selected_index),
-    destinations=[
-        ft.NavigationBarDestination(icon=ft.icons.EXPLORE, label='Explore'),
-        ft.NavigationBarDestination(icon=ft.icons.COMMUTE, label='Commute'),
-        ft.NavigationBarDestination(
-            icon=ft.icons.BOOKMARK_BORDER,
-            selected_icon=ft.icons.BOOKMARK,
-            label='Explore',
-        ),
-    ]
-    )
+    # page.navigation_bar = ft.CupertinoNavigationBar(
+    # bgcolor= ft.colors.BLACK38,
+    # inactive_color=ft.colors.GREY,
+    # active_color=ft.colors.GREEN_800,
+    # on_change=lambda e: print('Selected tab:', e.control.selected_index),
+    # destinations=[
+    #     ft.NavigationBarDestination(icon=ft.icons.EXPLORE, label='Explore'),
+    #     ft.NavigationBarDestination(icon=ft.icons.COMMUTE, label='Commute'),
+    #     ft.NavigationBarDestination(
+    #         icon=ft.icons.BOOKMARK_BORDER,
+    #         selected_icon=ft.icons.BOOKMARK,
+    #         label='Explore',
+    #     ),
+    # ]
+    # )
     
-    page.appbar = ft.AppBar(
-    actions = [],
-    title=ft.Text(
-        value = 'Barrade Navegação superior', 
-        weight='BOLD', 
-        color=ft.colors.GREEN_600,
-        style=ft.TextStyle(
-            shadow = ft.BoxShadow(
-                blur_radius = 300,
-                # blur_style = ft.ShadowBlurStyle.OUTER,
-                color = ft.colors.WHITE
-            ),                
-        )
-        ),
-    shadow_color=ft.colors.BLUE,
-    elevation=8,
-    toolbar_height = 30,
-    bgcolor=ft.colors.BLACK38,
-    automatically_imply_leading=False,
-    ) 
+    # page.appbar = ft.AppBar(
+    # actions = [],
+    # title=ft.Text(
+    #     value = 'Barrade Navegação superior', 
+    #     weight='BOLD', 
+    #     color=ft.colors.GREEN_600,
+    #     style=ft.TextStyle(
+    #         shadow = ft.BoxShadow(
+    #             blur_radius = 300,
+    #             # blur_style = ft.ShadowBlurStyle.OUTER,
+    #             color = ft.colors.WHITE
+    #         ),                
+    #     )
+    #     ),
+    # shadow_color=ft.colors.BLUE,
+    # elevation=8,
+    # toolbar_height = 30,
+    # bgcolor=ft.colors.BLACK38,
+    # automatically_imply_leading=False,
+    # ) 
 
     p = ClassName()
     page.add(p)
