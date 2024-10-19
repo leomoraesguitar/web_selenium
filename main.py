@@ -8,7 +8,7 @@ import flet as ft
 # from  tkinter import Tk
 from selenium_leo1 import SeleniumLeo, By
 from re import findall, sub, search
-import pickle
+# import pickle
 import os
 from time import sleep
 import pandas as pd
@@ -23,6 +23,7 @@ load_dotenv()
 class ClassName(ft.Column):
     def __init__(self):
         super().__init__()
+        self.expand = True
         self.navegador_iniciado = False
         self.selenium = SeleniumLeo(print, modo_oculto=True)
         # self.pprint = print
@@ -49,7 +50,7 @@ class ClassName(ft.Column):
                 text = 'raspar',
                 on_click=self.Atualizar_tabela_picle,
             ),
-            ft.ListView([self.saida], expand=True)
+            ft.ListView([self.saida], expand=True, auto_scroll=True)
         ]
 
 
@@ -169,7 +170,7 @@ class ClassName(ft.Column):
         self.cont = 0
 
         total_de_mandados = int(self.selenium.navegador.find_element(By.XPATH, self.quantidade_de_mandados).text) 
-        print('total de mandaos no site: ', total_de_mandados)
+        self.pprint('total de mandaos no site: ', total_de_mandados)
         novos_manadados = 0
         # from IPython.display import clear_output
 
@@ -237,7 +238,7 @@ class ClassName(ft.Column):
 
         df_novos = None
         df_antigos = None
-        print(self.dic_cols_tabela2)
+        self.pprint(self.dic_cols_tabela2)
         # if len(self.dic_cols_tabela2['Nº do mandado:']) > 0:
         #     m = MandadoReduzido(
         #         dic_cols_tabela2_para_extracao = self.dic_cols_tabela2, 
@@ -286,20 +287,20 @@ class ClassName(ft.Column):
         #         pass
 
 
-    def SalvarPickle(self, var, nome):
-        if not nome.endswith('.plk'):
-            nome += '.plk'        
-        with open(nome, 'wb') as arquivo:
-            pickle.dump(var, arquivo)
+    # def SalvarPickle(self, var, nome):
+    #     if not nome.endswith('.plk'):
+    #         nome += '.plk'        
+    #     with open(nome, 'wb') as arquivo:
+    #         pickle.dump(var, arquivo)
 
-    def LerPickle(self, nome):
-        if not nome.endswith('.plk'):
-            nome += '.plk'
-        if os.path.isfile(nome):
-            with open(nome, 'rb') as arquivo:
-                return pickle.load(arquivo)
-        else:
-            return None    
+    # def LerPickle(self, nome):
+    #     if not nome.endswith('.plk'):
+    #         nome += '.plk'
+    #     if os.path.isfile(nome):
+    #         with open(nome, 'rb') as arquivo:
+    #             return pickle.load(arquivo)
+    #     else:
+    #         return None    
 
 
 

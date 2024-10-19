@@ -2,5 +2,4 @@ flet
 selenuim_leo
 pandas
 webdriver-manager
-pickle
 dotenv
