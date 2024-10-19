@@ -25,7 +25,7 @@ class ClassName(ft.Column):
         super().__init__()
         self.navegador_iniciado = False
         self.selenium = SeleniumLeo(print, modo_oculto=True)
-        self.pprint = print
+        # self.pprint = print
         self.nometabela = 'tabela.plk'
         self.login_tj = False
 
@@ -42,14 +42,22 @@ class ClassName(ft.Column):
         self.proxima_pagina = '//*[@id="mov_paginator_top"]/a[3]'
 
 
-
+        self.saida = ft.Text('')
 
         self.controls = [
             ft.FilledButton(
                 text = 'raspar',
                 on_click=self.Atualizar_tabela_picle,
-            )
+            ),
+            ft.ListView([self.saida], expand=True)
         ]
+
+
+    def pprint(self, *texto):
+        for i in list(texto):
+            self.saida.value += f'{i}\n'
+            self.saida.update()
+
 
     def Abrir(self, e):
         link = "https://www.tjse.jus.br/oficialjustica/paginas/movimentacaoMandado/movimentacaoMandado.tjse"
