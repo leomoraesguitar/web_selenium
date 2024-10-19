@@ -17,7 +17,7 @@ from selenium.webdriver.chrome.options import Options
 
 from time import sleep
 from random import uniform
-from os import path, remove,environ
+from os import path, remove,environ, getenv
 # from  pyperclip import copy, paste
 
 # from  tkinter import Tk

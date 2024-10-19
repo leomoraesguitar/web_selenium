@@ -1,11 +1,10 @@
 
 import flet as ft
 
-from selenium_leo1 import SeleniumLeo, By
+from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
 from re import findall, sub, search
 
-import os
-from time import sleep
+
 # import pandas as pd
 from dotenv import load_dotenv
 
@@ -25,8 +24,8 @@ class ClassName(ft.Column):
         self.nometabela = 'tabela.plk'
         self.login_tj = False
 
-        self.usuario = os.getenv("USUARIO")
-        self.senha = os.getenv("SENHA")
+        self.usuario = getenv("USUARIO")
+        self.senha = getenv("SENHA")
 
 
         self.home = '//*[@id="menuPrincipal"]/ul/li[1]/a/span'
@@ -142,7 +141,7 @@ class ClassName(ft.Column):
 
         self.mandados_antigos = []
         self.mandados_antigos_index = []
-        if os.path.exists(self.nometabela):
+        if path.exists(self.nometabela):
             # self.tabela = self.LerPickle(self.nometabela)
             self.tabela = None
             if not self.tabela is None:
