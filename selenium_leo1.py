@@ -1,6 +1,15 @@
 # import undetected_chromedriver as uc
-from undetected_chromedriver import ChromeOptions, Chrome
-from auto_download_undetected_chromedriver import download_undetected_chromedriver
+# from undetected_chromedriver import ChromeOptions, Chrome
+# from auto_download_undetected_chromedriver import download_undetected_chromedriver
+
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+
+
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -117,7 +126,8 @@ class SeleniumLeo:
     @property
     def Iniciar(self):
         if not self.navegador_iniciado:
-            options = ChromeOptions()
+            options = Options()
+
             # perfil = self.verificar_pasta_perfil_chrome()
             # if perfil != None:
             #     options.add_argument(f'--user-data-dir={perfil}')
@@ -125,53 +135,25 @@ class SeleniumLeo:
             #     tutorial_criar_perfil_chrome = 'https://www.google.com/search?q=como+criar+perfil+do+chrome&sca_esv=eb02f0240770053f&sxsrf=ADLYWILKo2Dhu54HDJcAL4saWGAKBYMN9A%3A1722248903518&ei=x26nZsilH8O_5OUP35r--Ak&ved=0ahUKEwiIpe-QhcyHAxXDH7kGHV-NH58Q4dUDCBA&uact=5&oq=como+criar+perfil+do+chrome&gs_lp=Egxnd3Mtd2l6LXNlcnAiG2NvbW8gY3JpYXIgcGVyZmlsIGRvIGNocm9tZTIIECEYoAEYwwRIvxNQ6gNYsA5wAXgAkAEAmAGFAqABrgmqAQUwLjYuMbgBA8gBAPgBAZgCBKAC-APCAgoQABiwAxjWBBhHwgIKECEYoAEYwwQYCpgDAIgGAZAGCJIHAzEuM6AHtRs&sclient=gws-wiz-serp'
             #     return open(tutorial_criar_perfil_chrome)
             
-            # if self.modo_oculto:
-            options.add_argument("--headless")
-            options.add_argument("--no-sandbox")
-            options.add_argument("--disable-dev-shm-usage")
+            if self.modo_oculto:
+                options.add_argument("--headless")
+                options.add_argument("--no-sandbox")
+                options.add_argument("--disable-dev-shm-usage")
                         
                 # options.add_argument("--disable-gpu")
 
             # options.add_argument(tamanho_janela)
             # options.add_argument(f"--window-position={largura_monitor//2},0")
 
-            def DeletarArquivo(caminho_arquivo):
-                if path.exists(caminho_arquivo):
-                    remove(caminho_arquivo)
-
-            # if not path.exists(caminho := 'C:\\Users\\leani\\TabelaMandados\\selenium\\chromedriver.exe'):
-            if not path.exists(caminho := 'C:\\selenium\\chromedriver.exe'):
-                folder_path = r"C:\selenium"
-                chromedriver_path = download_undetected_chromedriver(
-                    folder_path, undetected=True, arm=False, force_update=True)
-                self.navegador = Chrome(options=options,
-                                        driver_executable_path=chromedriver_path,
-                                        headless=False, use_subprocess=True
-                                        )
-            else:
-                try:
-                    self.navegador = Chrome(options=options,
-                                            headless=False, use_subprocess=True
-                                            )
-                except:
-                    DeletarArquivo(caminho)
-                    folder_path = r"C:\selenium"
-                    chromedriver_path = download_undetected_chromedriver(
-                        folder_path, undetected=True, arm=False, force_update=True)
-                    self.navegador = Chrome(options=options,
-                                            driver_executable_path=chromedriver_path,
-                                            headless=False, use_subprocess=True
-                                            )
+            self.service = Service(ChromeDriverManager().install())            
+            self.navegador = webdriver.Chrome(service=self.service, options=options)          
             self.navegador_iniciado = True
         else:
-            self.pprint(f'O navegador já está iniciado')
+            print(f'O navegador já está iniciado')
         
-        if self.modo_oculto:
-            self.DefinirTamenhoPosicao(2,15)
-        else:
+        if not self.modo_oculto:
             largura, altura = self.get_screen_dimensions()
             self.DefinirTamenhoPosicao(largura, altura)
-
 
     @property
     def FecharNavegador(self):
