@@ -25,4 +25,4 @@ COPY . /app
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Comando para iniciar a aplicação
-CMD ["python", "main.py"]
+CMD ["flet", "run", "main.py","-w", "-p", "10000"]
