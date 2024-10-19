@@ -145,7 +145,9 @@ class SeleniumLeo:
             # options.add_argument(tamanho_janela)
             # options.add_argument(f"--window-position={largura_monitor//2},0")
 
-            self.service = Service(ChromeDriverManager().install())            
+            # self.service = Service(ChromeDriverManager().install())    
+            self.service = Service("/usr/local/bin/chromedriver") 
+                   
             self.navegador = webdriver.Chrome(service=self.service, options=options)          
             self.navegador_iniciado = True
         else:
