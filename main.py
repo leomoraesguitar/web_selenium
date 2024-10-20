@@ -44,6 +44,7 @@ class ClassName(ft.Column):
         self.saida = ft.Text('')
         dic = self.Ler_json_db()
         # lista = self.ConverterDicToList(dic)
+        dic = {i:dic[i] for i in ['Destinatario do mandado:','Endereco', 'Nº do Processo:', 'Nº do mandado:',   'Audiência', 'Final de prazo']}
         self.tabela_mandados = ResponsiveTablleDic(dic)
 
         self.controls = [
