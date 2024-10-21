@@ -580,31 +580,34 @@ class Linha(ft.Container):
         )
 
 
-        # x = 35
-        # self.content.controls.append(
-        #     ft.Row(
-        #         [
-        #             ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
-        #             tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
-        #             data=[self.index,'enviar']),
+        x = 35
+        self.content.controls.append(
+            ft.Row(
+                [
+                    ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
+                    tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
+                    data=[self.index,'enviar']),
 
-        #             ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
-        #                 tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
-        #                 on_click=self.Func, data=[self.index,'pdf',1]),
+                    ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
+                        tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
+                        on_click=self.Func, data=[self.index,'pdf',1]),
                         
-        #             ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
-        #                     tooltip='Add Contato', icon_color = cor2,
-        #                     on_click=self.Func, data=[self.index,'add']),  
+                    ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
+                            tooltip='Add Contato', icon_color = cor2,
+                            on_click=self.Func, data=[self.index,'add']),  
 
-        #             ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
-        #                 width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
-        #                 on_click=self.Func, data=[self.index,'Mand.D',1]), 
+                    ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
+                        width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
+                        # on_click=self.Func, 
+                        url = 'https://api.whatsapp.com/send/?phone=5579999827592&text=Tenho+interesse+em+comprar+seu+carro&type=phone_number&app_absent=0',
+
+                        data=[self.index,'Mand.D',1]), 
                        
-        #             ft.Text(width=20)           
-        #         ], 
-        #         spacing=0
-        #     )
-        # )
+                    ft.Text(width=20)           
+                ], 
+                spacing=0
+            )
+        )
              
 
     def Func(self, e):
@@ -921,7 +924,7 @@ class ResponsiveTablleDic(ft.Row):
                             func=self.Ordenar_por
 
                         )
-                        for i in self.nomes_colunas #+['funçoes']
+                        for i in self.nomes_colunas +['Funções']
                     ]
                 ), 
         ) 

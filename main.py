@@ -5,7 +5,6 @@ from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
 from re import findall, sub, search
 from DatabaseManager import DatabaseManager
 from responsiveTablle import ResponsiveTablleDic
-
 # import pandas as pd
 from dotenv import load_dotenv
 
@@ -128,6 +127,7 @@ class ClassName(ft.Column):
         
 
 
+
     def Atualizar_tabela_picle(self,e):
         # self.SalvarPickle(self.tabela, self.nometabela_backup)
 
@@ -157,10 +157,7 @@ class ClassName(ft.Column):
                 self.mandados_antigos = list(self.tabela.get('Nº do mandado:', [])) 
             else:
                 self.mandados_antigos = []
-
-        
-
-
+    
 
         # try:
         # self.selenium.Aguardar('//*[@id="mov_data"]/tr['+f'{1}]/td[2]/a[1]')   
@@ -327,6 +324,8 @@ class ClassName(ft.Column):
             novos_dados_json=dic,
             tabela = 'mandadostjse'
         ) 
+
+
     def Ler_json_db(self):
         return self.db.LerJson('leomoraes',  "mandadostjse")
 
