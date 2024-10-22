@@ -5,7 +5,7 @@ import os
 import pickle
 from operator import attrgetter
 from re import findall
-from datetime import datetime
+from datetime import datetime,timedelta
 
 
 
@@ -359,8 +359,8 @@ class Linha(ft.Container):
         super().__init__()
         self.bgcolor = bgcolor
         self.index = index
-        self.padding=ft.Padding(0,3,0,3)
-        self.margin = ft.Margin(0,2,0,2)
+        self.padding=ft.padding.symmetric(18,0)
+        self.margin = ft.margin.symmetric(0,0)
         self.funcao = funcao
         self.nomes_colunas = nomes_colunas
 
@@ -511,16 +511,17 @@ class Linha(ft.Container):
                 )
 
 
-            # elif i in ['Final de prazo']:
-            #     valor = valores[self.nomes_colunas.index(i)]
-            #     self.objetos[i] = ft.Text(
-            #         value = valor, 
-            #         width = larguras.get(i, 80),
-            #         text_align='center',
-            #         selectable=True,
-            #         color=ft.colors.with_opacity(0.8, ft.colors.PRIMARY),
+            elif i in ['Final de prazo', 'Recebimento', 'Audiência']:
+                valor = valores[self.nomes_colunas.index(i)]
+                self.objetos[i] = ft.Text(
+                    value = valor, 
+                    width = larguras.get(i, 80),
+                    text_align='center',
+                    selectable=True,
+                    data = self.excel_date_converter(valor),
+                    color=ft.colors.with_opacity(0.8, ft.colors.PRIMARY),
 
-            #     )
+                )
 
                                                              
             else:
@@ -539,35 +540,56 @@ class Linha(ft.Container):
 
 
         if 'Final de prazo' in self.nomes_colunas:
-          
-                prazo = findall(r'(\d{2}/\d{2}/\d{4})', self.objetos.get('Final de prazo',None).value)[0]
-                current_time = datetime.now()
+                def converter_para_datetime(data_string):
+                    return datetime.strptime(data_string, "%d/%m/%Y %H:%M:%S")
+                def next_thursday():
+                    today = datetime.now().date()
+                    # Calcula quantos dias faltam para a próxima quinta-feira
+                    days_until_thursday = (3 - today.weekday()) % 7
+                    if days_until_thursday == 0:
+                        # Caso hoje seja quinta-feira, pegamos a próxima
+                        days_until_thursday = 7
+                    # Retorna a data da próxima quinta-feira
+                    return today + timedelta(days=days_until_thursday)
+
+                def compare_date_with_next_thursday(date_str):
+                    # Converte a data fornecida para o número Excel
+                    given_date_excel = self.excel_date_converter(date_str)
+                    
+                    # Converte a próxima quinta-feira para o número Excel
+                    next_thursday_date = next_thursday()
+                    next_thursday_excel = self.excel_date_converter(next_thursday_date.strftime("%d/%m/%Y 00:00:00"))
+                    
+                    # Retorna True se a data fornecida for menor que a próxima quinta-feira
+                    return given_date_excel < next_thursday_excel  
+                        
+                # prazo = findall(r'(\d{2}/\d{2}/\d{4})', self.objetos.get('Final de prazo',None).value)[0]
+                prazo = self.objetos.get('Final de prazo',None).data
+
                 cor2  = 'primary,0.7'
                 # print('prazo:', prazo)
                 # Função para converter string "dd/mm/yy" para datetime
-                def converter_para_datetime(data_string):
-                    return datetime.strptime(data_string, '%d/%m/%Y')
                 # print('len(prazo):',len(prazo))
-                if len(prazo) > 5:
-                    prazo_convertido = converter_para_datetime(prazo)
+            
+                next_thursday_date = next_thursday()
+                next_thursday_excel = self.excel_date_converter(next_thursday_date.strftime("%d/%m/%Y 00:00:00"))
+                
+                # Retorna True se a data fornecida for menor que a próxima quinta-feira
+                # return given_date_excel < next_thursday_excel                     
+                if prazo < next_thursday_excel:
+                    # cor2  = 'red,0.5'
+                    self.bgcolor = '#670707'
 
-                    diferenca = prazo_convertido - current_time
-                    # print('diferenca:',diferenca)
-
-                    if diferenca.days < 8:
-                        # cor2  = 'red,0.5'
-                        self.bgcolor = '#670707'
-
-                       
-                    elif diferenca.days < 16:
-                        cor2  = '#ebebeb'
-                        self.bgcolor = '#4d0909'
-                        for i in self.objetos.items():
-                            i[1].color = cor2
-                            # i[1].update()
-                            # print(i[1].color)
-                       
                     
+                elif prazo < next_thursday_excel + 8:
+                    cor2  = '#110000'
+                    self.bgcolor = '#b1cc18'
+                    for i in self.objetos.items():
+                        i[1].color = cor2
+                        # i[1].update()
+                        # print(i[1].color)
+                    
+         
                
 
 
@@ -580,34 +602,34 @@ class Linha(ft.Container):
         )
 
 
-        x = 35
-        self.content.controls.append(
-            ft.Row(
-                [
-                    ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
-                    tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
-                    data=[self.index,'enviar']),
+        # x = 35
+        # self.content.controls.append(
+        #     ft.Row(
+        #         [
+        #             ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
+        #             tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
+        #             data=[self.index,'enviar']),
 
-                    ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
-                        tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
-                        on_click=self.Func, data=[self.index,'pdf',1]),
+        #             ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
+        #                 tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
+        #                 on_click=self.Func, data=[self.index,'pdf',1]),
                         
-                    ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
-                            tooltip='Add Contato', icon_color = cor2,
-                            on_click=self.Func, data=[self.index,'add']),  
+        #             ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
+        #                     tooltip='Add Contato', icon_color = cor2,
+        #                     on_click=self.Func, data=[self.index,'add']),  
 
-                    ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
-                        width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
-                        # on_click=self.Func, 
-                        url = 'https://api.whatsapp.com/send/?phone=5579999827592&text=Tenho+interesse+em+comprar+seu+carro&type=phone_number&app_absent=0',
+        #             ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
+        #                 width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
+        #                 # on_click=self.Func, 
+        #                 url = 'https://api.whatsapp.com/send/?phone=5579999827592&text=Tenho+interesse+em+comprar+seu+carro&type=phone_number&app_absent=0',
 
-                        data=[self.index,'Mand.D',1]), 
+        #                 data=[self.index,'Mand.D',1]), 
                        
-                    ft.Text(width=20)           
-                ], 
-                spacing=0
-            )
-        )
+        #             ft.Text(width=20)           
+        #         ], 
+        #         spacing=0
+        #     )
+        # )
              
 
     def Func(self, e):
@@ -641,7 +663,7 @@ class Linha(ft.Container):
             case 'impresso':
                 cor = '#202933'     
             case 'devolver':
-                cor = '#450909'
+                cor = '#5e5858'
             case 'imp_':
                 cor = '#0a0c2f'
             case 'Transferir':
@@ -649,6 +671,27 @@ class Linha(ft.Container):
             case _:
                 cor = 'black' 
         return cor
+
+    def excel_date_converter(self, date_str):
+        # Converte a string em formato de data e hora para um objeto de data (ignora o tempo)
+        date_format = "%d/%m/%Y %H:%M:%S"
+        
+        # Parse da string para objeto datetime
+        if len(date_str) < 6:
+            date_str = "30/12/2080 07:00:00"
+        try:
+            dt = datetime.strptime(date_str, date_format)
+        except:
+            date_format = "%d/%m/%Y %H:%M"
+            dt = datetime.strptime(date_str, date_format)
+
+
+        
+        # Converte a data para um número Excel (dias a partir de 01/01/1900)
+        base_date = datetime(1899, 12, 30)  # Data de referência usada pelo Excel
+        
+        # Subtrai as datas para obter a diferença em dias e retorna como número inteiro
+        return (dt.date() - base_date.date()).days
 
 
                                                                                                                    
@@ -909,6 +952,7 @@ class ResponsiveTablleDic(ft.Row):
         
         self.header =  ft.Container(
                 bgcolor = 'grey800,0.99',
+                padding=ft.padding.symmetric(12,0),
                 border_radius=ft.BorderRadius(
                     20,20,0,0
                 ),
@@ -921,10 +965,11 @@ class ResponsiveTablleDic(ft.Row):
                             value = i,
                             width = self.larguras.get(i, 80),
                             data = i,
+                            color = 'primary',
                             func=self.Ordenar_por
 
                         )
-                        for i in self.nomes_colunas +['Funções']
+                        for i in self.nomes_colunas #+['Funções']
                     ]
                 ), 
         ) 
@@ -964,7 +1009,14 @@ class ResponsiveTablleDic(ft.Row):
             ),            
         ]
         
-      
+    def did_mount(self):
+        lista = [i for i in self.boddy.controls]
+        lista = self.OrdenarListadeClasses(lista, 'Final de prazo', decrecente = False)
+        self.boddy.controls = []
+        for n, k in enumerate(lista):
+            # k.bgcolor =  'black' if n%2 == 0 else 'grey900,0.99'
+            self.boddy.controls.append(k)
+        self.boddy.update()
 
     def CarregarLinhas(self):
         df_lista = self.ConverterDicToList(self.tabela)
@@ -988,8 +1040,10 @@ class ResponsiveTablleDic(ft.Row):
 
     def OrdenarListadeClasses(self, lista, data, decrecente=True):
         # return sorted(lista, key=attrgetter(atributo), reverse=decrecente) 
-
-        return sorted(lista, key=lambda x: x.objetos[data].value, reverse=decrecente)    
+        if data in ['Final de prazo', 'Recebimento', 'Audiência']:
+            return sorted(lista, key=lambda x: x.objetos[data].data, reverse=decrecente)    
+        else:
+            return sorted(lista, key=lambda x: x.objetos[data].value, reverse=decrecente)    
 
     def Ordenar_por(self, e):
         data = e.control.data
