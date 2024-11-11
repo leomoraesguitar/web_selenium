@@ -615,31 +615,31 @@ class Linha(ft.Container):
         )
 
 
-        x = 35
-        self.content.controls.append(
-            ft.Row(
-                [
-                    ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
-                    tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
-                    data=[self.index,'enviar']),
+        # x = 35
+        # self.content.controls.append(
+        #     ft.Row(
+        #         [
+        #             ft.IconButton(icon=ft.icons.SEND, width=x,alignment = ft.alignment.center,icon_color = cor2,
+        #             tooltip=f"Enviar Mandado \npara {self.objetos.get('Destinatario do mandado:', 'nome')}", on_click=self.Func,
+        #             data=[self.index,'enviar']),
 
-                    ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
-                        tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
-                        on_click=self.Func, data=[self.index,'pdf',1]),
+        #             ft.IconButton(icon=ft.icons.PICTURE_AS_PDF_OUTLINED,width=x,alignment = ft.alignment.center,
+        #                 tooltip='Enviar PDF para o \ncontato aberto no zap', icon_color = cor2,
+        #                 on_click=self.Func, data=[self.index,'pdf',1]),
                         
-                    ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
-                            tooltip='Add Contato', icon_color = cor2,
-                            on_click=self.Func, data=[self.index,'add']),  
+        #             ft.IconButton(icon=ft.icons.PERM_CONTACT_CAL_ROUNDED,width=x,alignment = ft.alignment.center,
+        #                     tooltip='Add Contato', icon_color = cor2,
+        #                     on_click=self.Func, data=[self.index,'add']),  
 
-                    ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
-                        width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
-                        on_click=self.Func, data=[self.index,'Mand.D',1]), 
+        #             ft.IconButton(icon=ft.icons.CANCEL_SCHEDULE_SEND_OUTLINED,alignment = ft.alignment.center,
+        #                 width=x, tooltip='Enviar Mandado direto \npara o contato \naberto no zap', icon_color = cor2,
+        #                 on_click=self.Func, data=[self.index,'Mand.D',1]), 
                        
-                    ft.Text(width=20)           
-                ], 
-                spacing=0
-            )
-        )
+        #             ft.Text(width=20)           
+        #         ], 
+        #         spacing=0
+        #     )
+        # )
              
 
     def excel_date_converter(self, date_str):
@@ -928,8 +928,8 @@ class ResponsiveTablle(ft.Row):
         self.larguras = {
             'Nº do Processo:':120, 
             'Nº do mandado:':135, 
-            'Destinatario do mandado:':140,
-            'Endereco':150, 
+            'Destinatario do mandado:':220,
+            'Endereco':200, 
             'Situação': 80,
             'Recebimento':110,
             'Prioridade':90,
@@ -1038,9 +1038,11 @@ class ResponsiveTablle(ft.Row):
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=0,
                     run_spacing=0,
+                    # width=600,
+                    expand=True,
                     controls = [
                         self.linha_atalhos,  
-                        ft.Text('_'*180, text_align='center', color = 'primary', expand_loose=True, overflow=ft.TextOverflow.CLIP ),                 
+                        ft.Text('_'*120, text_align='center', color = 'primary', expand_loose=True, overflow=ft.TextOverflow.CLIP ),                 
                         ft.Row(
                             vertical_alignment='center',
                             tight=True,
@@ -1054,7 +1056,7 @@ class ResponsiveTablle(ft.Row):
                                     func=self.Ordenar_por
 
                                 )
-                                for i in self.nomes_colunas + ['Funções']
+                                for i in self.nomes_colunas #+ ['Funções']
                             ]
                         ), 
 

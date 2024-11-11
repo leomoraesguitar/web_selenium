@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from gspread import service_account_from_dict
 from os import path, getenv
 from pickle import load
+from time import sleep
 load_dotenv()
 
 
@@ -78,6 +79,7 @@ class ClassName(ft.Column):
         self.saida = ft.Text('')
         # dic = self.Ler_json_db()
         dic = self.Ler_celulas4("A:z")
+        sleep(5)
         dic = self.lista_de_listas_para_dicionario(dic)
         # print('dic', dic)
         # lista = self.ConverterDicToList(dic)
