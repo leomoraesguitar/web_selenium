@@ -78,20 +78,24 @@ class ClassName(ft.Column):
 
         self.saida = ft.Text('')
         # dic = self.Ler_json_db()
+        self.erro = ft.Text('')
         dic = self.Ler_celulas4("A:z")
-        sleep(5)
-        dic = self.lista_de_listas_para_dicionario(dic)
-        # print('dic', dic)
-        # lista = self.ConverterDicToList(dic)
-        dic = {i:dic[i] for i in ['Destinatario do mandado:','Endereco', 'Nº do Processo:', 'Nº do mandado:',   'Audiência', 'Final de prazo']}
-        self.tabela_mandados = ResponsiveTablle(dic)
+        # sleep(5)
+        if isinstance(dic, list):
+            dic = self.lista_de_listas_para_dicionario(dic) 
+            # print('dic', dic)
+            # lista = self.ConverterDicToList(dic)
+            dic = {i:dic[i] for i in ['Destinatario do mandado:','Endereco', 'Nº do Processo:', 'Nº do mandado:',   'Audiência', 'Final de prazo']}
+            self.tabela_mandados = ResponsiveTablle(dic)
+        else:
+            self.tabela_mandados = self.erro
 
         self.controls = [
             # ft.FilledButton(
             #     text = 'raspar',
             #     on_click=self.Atualizar_tabela_picle,
             # ),
-
+            self.erro,
             self.tabela_mandados,
 
             # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
@@ -106,9 +110,11 @@ class ClassName(ft.Column):
             return sheet.get(intervalo)
         except exceptions.APIError as e:
             print(f"Erro ao acessar a planilha: {e}")
+            self.erro.value += f"Erro ao acessar a planilha: {e}"
             return None
         except Exception as e:
             print(f"Erro inesperado: {e}")
+            self.erro.value += f"Erro inesperado: {e}"
             return None# ervalo)
 
     def pprint(self, *texto):
