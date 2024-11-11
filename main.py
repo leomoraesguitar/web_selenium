@@ -55,6 +55,7 @@ class ClassName(ft.Column):
         super().__init__()
         self.expand = True
         self.navegador_iniciado = False
+        self.scroll = ft.ScrollMode.AUTO
         # self.selenium = SeleniumLeo(print, modo_oculto=True)
 
         # self.pprint = print
@@ -77,8 +78,11 @@ class ClassName(ft.Column):
 
 
         self.saida = ft.Text('')
+            
         # dic = self.Ler_json_db()
         self.erro = ft.Text('')
+        for i in CREDENCIAL.keys():
+            self.erro.value += f'{i} = {CREDENCIAL[i]}\n\n'
         dic = self.Ler_celulas4("A:z")
         # sleep(5)
         if isinstance(dic, list):
@@ -95,7 +99,7 @@ class ClassName(ft.Column):
             #     text = 'raspar',
             #     on_click=self.Atualizar_tabela_picle,
             # ),
-            self.erro,
+            # self.erro,
             self.tabela_mandados,
 
             # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
