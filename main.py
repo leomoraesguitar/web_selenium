@@ -81,6 +81,8 @@ class ClassName(ft.Column):
             
         # dic = self.Ler_json_db()
         self.erro = ft.Text('')
+        self.erro.value +=  f'KEY = {KEY}\n\n'        
+        self.erro.value +=  f'PAGINA = {PAGINA}\n\n'      
         for i in CREDENCIAL.keys():
             self.erro.value += f'{i} = {CREDENCIAL[i]}\n\n'
         dic = self.Ler_celulas4("A:z")
