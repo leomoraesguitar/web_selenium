@@ -17,7 +17,7 @@ load_dotenv()
 
 # Acessa a variável de ambiente
 
-KEY = getenv("KEy") 
+KEY = getenv("KEY") 
 PAGINA = getenv("PAGINA")
 TYPE =  getenv("type")
 PROJECT_ID =  getenv("project_id")
@@ -106,8 +106,9 @@ class ClassName(ft.Column):
         # return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(int
         try:
             client = service_account_from_dict(CREDENCIAL)
-            sheet = client.open_by_key(KEY).worksheet(PAGINA)
-            return sheet.get(intervalo)
+            sheet = client.open_by_key(KEY)
+            chave = sheet.worksheet(PAGINA)
+            return chave.get(intervalo)
         except exceptions.APIError as e:
             print(f"Erro ao acessar a planilha: {e}")
             self.erro.value += f"Erro ao acessar a planilha: {e}"
