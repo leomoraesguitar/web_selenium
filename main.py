@@ -1,14 +1,14 @@
 
 import flet as ft
 import json
-from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
+# from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
 from re import findall, sub, search
 # from DatabaseManager import DatabaseManager
 from responsiveTablle import ResponsiveTablle
 # import pandas as pd
 from dotenv import load_dotenv
 from gspread import service_account_from_dict
-from os import path
+from os import path, getenv
 from pickle import load
 load_dotenv()
 
@@ -43,11 +43,9 @@ CREDENCIAL = {
     "universe_domain": UNIVERSE_DOMAIN
 }
 
-def Atualizar_celulas4(valor:list[list],intervalo = "g1:h2"):
-    service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).update( values = valor, range_name = intervalo)
+# def Atualizar_celulas4(valor:list[list],intervalo = "g1:h2"):
+#     service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).update( values = valor, range_name = intervalo)
 
-def Ler_celulas4(intervalo = "A1:B2"):
-    return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(intervalo)
 
 
 
@@ -56,7 +54,7 @@ class ClassName(ft.Column):
         super().__init__()
         self.expand = True
         self.navegador_iniciado = False
-        self.selenium = SeleniumLeo(print, modo_oculto=True)
+        # self.selenium = SeleniumLeo(print, modo_oculto=True)
 
         # self.pprint = print
         self.nometabela = 'tabela.plk'
@@ -79,7 +77,7 @@ class ClassName(ft.Column):
 
         self.saida = ft.Text('')
         # dic = self.Ler_json_db()
-        dic = Ler_celulas4("A:z")
+        dic = self.Ler_celulas4("A:z")
         dic = self.lista_de_listas_para_dicionario(dic)
         # print('dic', dic)
         # lista = self.ConverterDicToList(dic)
@@ -97,6 +95,8 @@ class ClassName(ft.Column):
             # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
         ]
 
+    def Ler_celulas4(self, intervalo = "A1:B2"):
+        return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(intervalo)
 
     def pprint(self, *texto):
         for i in list(texto):
