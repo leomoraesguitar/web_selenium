@@ -3,14 +3,51 @@ import flet as ft
 import json
 from selenium_leo1 import SeleniumLeo, By, sleep, getenv, path
 from re import findall, sub, search
-from DatabaseManager import DatabaseManager
-from responsiveTablle import ResponsiveTablleDic
+# from DatabaseManager import DatabaseManager
+from responsiveTablle import ResponsiveTablle
 # import pandas as pd
 from dotenv import load_dotenv
-
-
+from gspread import service_account_from_dict
+from os import path
+from pickle import load
 load_dotenv()
+
+
+
 # Acessa a variável de ambiente
+
+KEY = getenv("KEy") 
+PAGINA = getenv("PAGINA")
+TYPE =  getenv("type")
+PROJECT_ID =  getenv("project_id")
+PRIVATE_KEY_ID =  getenv("private_key_id")
+PRIVATE_KEY =  getenv("private_key")
+CLIENT_EMAIL =  getenv("client_email")
+CLIENT_ID =  getenv("client_id")
+AUTH_URI =  getenv("auth_uri")
+TOKEN_URI =  getenv("token_uri")
+AUTH_PROVIDER_X509_CERT_URL =  getenv("auth_provider_x509_cert_url")
+CLIENT_X509_CERT_URL =  getenv("client_x509_cert_url")
+UNIVERSE_DOMAIN =  getenv("universe_domain")
+CREDENCIAL = {
+    "type": TYPE,
+    "project_id": PROJECT_ID,
+    "private_key_id": PRIVATE_KEY_ID,
+    "private_key": PRIVATE_KEY,
+    "client_email": CLIENT_EMAIL,
+    "client_id": CLIENT_ID,
+    "auth_uri": AUTH_URI,
+    "token_uri": TOKEN_URI,
+    "auth_provider_x509_cert_url": AUTH_PROVIDER_X509_CERT_URL,
+    "client_x509_cert_url": CLIENT_X509_CERT_URL,
+    "universe_domain": UNIVERSE_DOMAIN
+}
+
+def Atualizar_celulas4(valor:list[list],intervalo = "g1:h2"):
+    service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).update( values = valor, range_name = intervalo)
+
+def Ler_celulas4(intervalo = "A1:B2"):
+    return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(intervalo)
 
 
 
@@ -27,9 +64,9 @@ class ClassName(ft.Column):
 
         self.usuario = getenv("USUARIO")
         self.senha = getenv("SENHA")
-        connection_string = getenv("connection_string")
+        # connection_string = getenv("connection_string")
 
-        self.db = DatabaseManager(connection_string, "mandadostjse", pprint=self.pprint)
+        # self.db = DatabaseManager(connection_string, "mandadostjse", pprint=self.pprint)
 
         self.home = '//*[@id="menuPrincipal"]/ul/li[1]/a/span'
         self.cem = '//*[@id="mov:j_id2"]/option[3]'
@@ -41,17 +78,22 @@ class ClassName(ft.Column):
 
 
         self.saida = ft.Text('')
-        dic = self.Ler_json_db()
+        # dic = self.Ler_json_db()
+        dic = Ler_celulas4("A:z")
+        dic = self.lista_de_listas_para_dicionario(dic)
+        # print('dic', dic)
         # lista = self.ConverterDicToList(dic)
         dic = {i:dic[i] for i in ['Destinatario do mandado:','Endereco', 'Nº do Processo:', 'Nº do mandado:',   'Audiência', 'Final de prazo']}
-        self.tabela_mandados = ResponsiveTablleDic(dic)
+        self.tabela_mandados = ResponsiveTablle(dic)
 
         self.controls = [
             # ft.FilledButton(
             #     text = 'raspar',
             #     on_click=self.Atualizar_tabela_picle,
             # ),
+
             self.tabela_mandados,
+
             # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
         ]
 
@@ -61,6 +103,14 @@ class ClassName(ft.Column):
             self.saida.value += f'{i}\n'
             self.saida.update()
 
+    def LerPickle(self, nome):
+        if not nome.endswith('.plk'):
+            nome += '.plk'
+        if path.isfile(nome):
+            with open(nome, 'rb') as arquivo:
+                return load(arquivo)
+        else:
+            return None  
 
     def Abrir(self, e):
         link = "https://www.tjse.jus.br/oficialjustica/paginas/movimentacaoMandado/movimentacaoMandado.tjse"
@@ -316,6 +366,33 @@ class ClassName(ft.Column):
                 l1.append(dic[j][n])
             l.append(l1)
         return l
+
+
+    def lista_de_listas_para_dicionario(self, lista_de_listas):
+        """
+        Converte uma lista de listas em um dicionário, onde a primeira sublista contém as chaves e as sublistas subsequentes contêm os valores.
+        
+        Args:
+        lista_de_listas (list of lists): Lista de listas onde a primeira sublista contém as chaves.
+        
+        Returns:
+        dict: Dicionário resultante da conversão.
+        """
+        if not lista_de_listas:
+            return {}
+        
+        # A primeira sublista contém as chaves
+        chaves = lista_de_listas[0]
+        
+        # Inicializar o dicionário com as chaves e listas vazias
+        dicionario = {chave: [] for chave in chaves}
+        
+        # Preencher o dicionário com os valores das sublistas subsequentes
+        for sublista in lista_de_listas[1:]:
+            for chave, valor in zip(chaves, sublista):
+                dicionario[chave].append(valor)
+        
+        return dicionario
 
 
     def Escrever_json_db(self, dic):

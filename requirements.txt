@@ -1,4 +1,3 @@
 flet
 selenium
-webdriver-manager
-mysql-connector-python
+gspread
