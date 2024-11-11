@@ -7,7 +7,7 @@ from re import findall, sub, search
 from responsiveTablle import ResponsiveTablle
 # import pandas as pd
 from dotenv import load_dotenv
-from gspread import service_account_from_dict
+from gspread import service_account_from_dict, exceptions
 from os import path, getenv
 from pickle import load
 from time import sleep
@@ -97,8 +97,19 @@ class ClassName(ft.Column):
             # ft.ListView([self.saida], expand=True, auto_scroll=True, height=100)
         ]
 
+
     def Ler_celulas4(self, intervalo = "A1:B2"):
-        return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(intervalo)
+        # return service_account_from_dict(CREDENCIAL).open_by_key(KEY).worksheet(PAGINA).get(int
+        try:
+            client = service_account_from_dict(CREDENCIAL)
+            sheet = client.open_by_key(KEY).worksheet(PAGINA)
+            return sheet.get(intervalo)
+        except exceptions.APIError as e:
+            print(f"Erro ao acessar a planilha: {e}")
+            return None
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
+            return None# ervalo)
 
     def pprint(self, *texto):
         for i in list(texto):
